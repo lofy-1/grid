@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tile Grid</title>
+<style>
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    gap: 2px;
+  }
+  .grid-item {
+    width: 50px;
+    height: 50px;
+    background-color: lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .counter {
+    position: absolute;
+    top: 50px;
+    left: 550px;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+<div class="grid-container" id="grid">
+  <!-- JavaScript will generate the grid here -->
+</div>
+<div class="counter" id="counter">Clicks: 0</div>
+<div class="table" id="table">+Green Tiles </div>
+<script>
+let clickCount = 0;
+let greenTileCount = 0; // New variable for tracking green tiles
+let newlyAddedGreenTileCount = 0; 
+
+
+
+// Generate grid
+const gridContainer = document.getElementById('grid');
+const counterElement = document.getElementById('counter');
+const tableElement = document.getElementById('table');
+const numRows = 8;
+const numCols = 8;
+const totalTiles = numRows * numCols;
+
+for (let row = 0; row < numRows; row++) {
+  for (let col = 0; col < numCols; col++) {
+    const gridItem = document.createElement('div');
+    gridItem.className = 'grid-item';
+    gridItem.dataset.row = row;
+    gridItem.dataset.col = col;
+    gridItem.addEventListener('click', handleClick);
+    gridContainer.appendChild(gridItem);
+  }
+}
+
+// Handle click event
+function handleClick(event) {
+  const clickedRow = parseInt(event.target.dataset.row);
+  const clickedCol = parseInt(event.target.dataset.col);
+  newlyAddedGreenTileCount = 0;  
+  // Loop through neighboring tiles
+  for (let row = clickedRow - 1; row <= clickedRow + 1; row++) {
+    for (let col = clickedCol - 1; col <= clickedCol + 1; col++) {
+      const neighbor = document.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
+      if (neighbor && neighbor.style.backgroundColor !== 'green') { // Check if not already green
+        neighbor.style.backgroundColor = 'green';
+        greenTileCount++; // Increment green tile count
+        newlyAddedGreenTileCount++; // Show how much green tile was added in this 1 click
+      }
+    }
+  }
+  // Update counter
+  clickCount++;
+  counterElement.textContent = `Clicks: ${clickCount} | Green Tiles: ${greenTileCount}| Added tile: ${newlyAddedGreenTileCount} | Total tiles: ${totalTiles} | percentage: ${greenTileCount/totalTiles *100}% `;
+  tableElement.textContent += `${newlyAddedGreenTileCount},`;
+
+}
+
+</script>
+</body>
+</html>
